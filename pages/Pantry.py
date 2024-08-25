@@ -200,6 +200,8 @@ else:
 
                     with col2:
                         delete_submitted = st.form_submit_button("Delete Item")
+                    
+                    view_history_submitted = st.form_submit_button("View Item History")
 
                     if update_submitted:
                         update_pantry_item(item_id, new_item_name, new_quantity, new_unit, new_expiration_date, new_notes)
@@ -210,15 +212,20 @@ else:
                         delete_pantry_item(item_id)
                         st.success("Item deleted successfully!")
                         st.rerun()
-                
+
+                    if view_history_submitted:
+                        history = fetch_pantry_history(item_id)
+                        if history:
+                            history_df = pd.DataFrame(history, columns=["ID", "Username", "Item Name", "Quantity", "Unit", "Expiration Date", "Notes", "Added Date", "Modified Date"])
+                            history_df['Unit'] = pd.to_numeric(history_df['Unit'], errors='coerce').fillna(1)
+                            history_df['Total Consumption'] = history_df['Quantity'] * history_df['Unit']
+                            history_df['Modified Date'] = pd.to_datetime(history_df['Modified Date'])
+                            st.dataframe(history_df)
+
         else:
             st.write("No items found in your pantry.")
 
-        if st.button("Edit Profile"):
-            st.switch_page("pages/Edit.py")
 
-        if st.button("Log out"):
-            log_out()
     else:
         st.error("Error fetching user details. Please log in again.")
         st.button("Log out", on_click=log_out)

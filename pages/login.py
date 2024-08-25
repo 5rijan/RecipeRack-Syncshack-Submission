@@ -51,6 +51,6 @@ if not st.session_state.get("logged_in", False):
             
     
 else:
-    st.success("Already logged in. Redirecting to your profile...")
+    st.success("Already logged in. Redirecting to your pantry...")
     sleep(0.5)
     st.switch_page("Main.py")
